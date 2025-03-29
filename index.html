@@ -37,7 +37,7 @@
                 el.classList.remove('hidden');
             });
         });
-        /*const req = new XMLHttpRequest();
+        const req = new XMLHttpRequest();
         req.open('GET', window.location.href, false);
         req.send(null);
 
@@ -46,7 +46,7 @@
 
         console.log('Starting worker with level:', level, 'prefix:', prefix);
 
-        const worker = new Worker('data:application/javascript;charset=utf-8;base64,b25tZXNzYWdlID0gYXN5bmMgZnVuY3Rpb24oZSkgew0KICAgIGNvbnNvbGUubG9nKCdXb3JrZXIgc3RhcnRlZCB3aXRoIGxldmVsOicsIGUuZGF0YS5sZXZlbCwgJ3ByZWZpeDonLCBlLmRhdGEucHJlZml4KTsNCiAgICANCiAgICBjb25zdCB7IHVybCwgbGV2ZWw6IGxldmVsU3RyLCBwcmVmaXggfSA9IGUuZGF0YTsNCiAgICBjb25zdCBsZXZlbCA9IHBhcnNlSW50KGxldmVsU3RyLCAxMCk7DQogICAgDQogICAgY29uc3QgZW5jb2RlciA9IG5ldyBUZXh0RW5jb2RlcigpOw0KICAgIA0KICAgIGxldCBpID0gMDsNCiAgICANCiAgICB3aGlsZSAodHJ1ZSkgew0KICAgICAgICBjb25zdCBjID0gYnRvYShpKyIiKTsNCiAgICAgICAgY29uc3Qgc29sID0gcHJlZml4ICsgYzsNCiAgICAgICAgDQogICAgICAgIGNvbnN0IGhhc2hCdWZmZXIgPSBhd2FpdCBjcnlwdG8uc3VidGxlLmRpZ2VzdCgnU0hBLTI1NicsIGVuY29kZXIuZW5jb2RlKHNvbCkpOw0KICAgICAgICBjb25zdCBoYXNoQXJyYXkgPSBBcnJheS5mcm9tKG5ldyBVaW50OEFycmF5KGhhc2hCdWZmZXIpKTsNCiAgICAgICAgDQogICAgICAgIGNvbnN0IGZ1bGxIYXNoSGV4ID0gaGFzaEFycmF5Lm1hcChiID0+IGIudG9TdHJpbmcoMTYpLnBhZFN0YXJ0KDIsICcwJykpLmpvaW4oJycpOw0KICAgICAgICANCiAgICAgICAgaWYgKGZ1bGxIYXNoSGV4LnN0YXJ0c1dpdGgoJzAnLnJlcGVhdChsZXZlbCkpKSB7DQogICAgICAgICAgICBjb25zb2xlLmxvZygnU29sdXRpb24gZm91bmQgYWZ0ZXInLCBpLCAnYXR0ZW1wdHMnKTsNCiAgICAgICAgICAgIHBvc3RNZXNzYWdlKHsgDQogICAgICAgICAgICAgICAgZG9uZTogdHJ1ZSwgDQogICAgICAgICAgICAgICAgc29sdXRpb246IHNvbCwNCiAgICAgICAgICAgICAgICBoYXNoOiBmdWxsSGFzaEhleCwNCiAgICAgICAgICAgIH0pOw0KICAgICAgICAgICAgYnJlYWs7DQogICAgICAgIH0NCiAgICAgICAgDQogICAgICAgIGkrKzsNCiAgICAgICAgDQogICAgICAgIGlmIChpICUgMTAwMCA9PT0gMCkgew0KICAgICAgICAgICAgcG9zdE1lc3NhZ2UoeyBwcm9ncmVzczogaSB9KTsNCiAgICAgICAgfQ0KICAgIH0NCn0=');
+        const worker = new Worker('data:application/javascript;charset=utf-8;base64,b25tZXNzYWdlPWFzeW5jIGZ1bmN0aW9uKHQpe2NvbnNvbGUubG9nKCJXb3JrZXIgc3RhcnRlZCB3aXRoIGxldmVsOiIsdC5kYXRhLmxldmVsLCJwcmVmaXg6Iix0LmRhdGEucHJlZml4KTtsZXR7dXJsOmUsbGV2ZWw6YSxwcmVmaXg6b309dC5kYXRhLHI9cGFyc2VJbnQoYSwxMCksbD1uZXcgVGV4dEVuY29kZXIsaT0wO2Zvcig7Oyl7bGV0IG49YnRvYShpKyIiKSxzPW8rbixkPWF3YWl0IGNyeXB0by5zdWJ0bGUuZGlnZXN0KCJTSEEtMjU2IixsLmVuY29kZShzKSksJD1BcnJheS5mcm9tKG5ldyBVaW50OEFycmF5KGQpKSxmPSQubWFwKHQ9PnQudG9TdHJpbmcoMTYpLnBhZFN0YXJ0KDIsIjAiKSkuam9pbigiIik7aWYoZi5zdGFydHNXaXRoKCIwIi5yZXBlYXQocikpKXtjb25zb2xlLmxvZygiU29sdXRpb24gZm91bmQgYWZ0ZXIiLGksImF0dGVtcHRzIikscG9zdE1lc3NhZ2Uoe2RvbmU6ITAsc29sdXRpb246cyxoYXNoOmZ9KTticmVha30rK2klMWUzPT0wJiZwb3N0TWVzc2FnZSh7cHJvZ3Jlc3M6aX0pfX07');
 
         worker.postMessage({
             url: window.location.href,
@@ -81,7 +81,7 @@
             } else if (e.data.progress) {
                 console.log(`Checked ${e.data.progress} possibilities...`);
             }
-        };*/
+        };
     </script>
     <div style="display: flex; align-items: center; justify-content: center; min-width: 100%; min-height: 100%;">
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 75%; text-align: center;">

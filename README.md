@@ -23,15 +23,21 @@ this sets the required number of leading zeros to 4, the time before expiration 
 whitelisting should not be used by itself, and should be paired with validating the ip ranges, as well as rate limiting.
 
 
-the default settings are:
-level 4
-ttl 3600 (one hour)
-cookie prefix "_powtect" (there is only one cookie, {prefix}_main)
-and no whitelist.
-the key, if not provided, is randomly generated on startup, so verification will have to be redone.
-keys are padded or truncated to 32 bytes.
+the default settings are:  
+level 4  
+ttl 3600 (one hour)  
+cookie prefix "_powtect" (there is only one cookie, {prefix}_main)  
+and no whitelist.  
+the key, if not provided, is randomly generated on startup, so verification will have to be redone.  
+keys are padded or truncated to 32 bytes.  
+
+## install and modification
+currently to install, just `git clone https://github.com/lucienv1/powtect` then run [xcaddy](https://github.com/caddyserver/xcaddy) in the same directory  
+to modify the html, just edit `index.html` (do not change the filename unless you also change the go embed statement in main.go) and run xcaddy  
+if you modify `worker.js` just create a data: uri, and replace the current one in `index.html`
 
 
-## credits
-the default spinner is from [n3r4zzurr0/svg-spinners](https://github.com/n3r4zzurr0/svg-spinners)
-very heavily inspired by [TecharoHQ/anubis](https://github.com/TecharoHQ/anubis)
+## credits/acknowledgments
+the default spinner is from [n3r4zzurr0/svg-spinners](https://github.com/n3r4zzurr0/svg-spinners) (mit license, © Utkarsh Verma)  
+the noscript warning icon is from [la-moore/scarlab-icons](https://github.com/la-moore/scarlab-icons) (mit license, © LaMoore)  
+very heavily inspired by [TecharoHQ/anubis](https://github.com/TecharoHQ/anubis)  
