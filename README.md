@@ -34,7 +34,8 @@ keys are padded or truncated to 32 bytes.
 ## install and modification
 currently to install, just `git clone https://github.com/lucienv1/powtect` then run [xcaddy](https://github.com/caddyserver/xcaddy) in the same directory  
 to modify the html, just edit `index.html` (do not change the filename unless you also change the go embed statement in main.go) and run xcaddy  
-if you modify `worker.js` just create a data: uri, and replace the current one in `index.html`
+if you modify `worker.js` just create a data: uri, and replace the current one in `index.html`  
+to turn on logging, just open main.go and search and replace all instances of `//log` with `log` and uncomment the log import statement  
 
 
 ## credits/acknowledgments

@@ -7,10 +7,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@480&display=swap');
-        :root {
-            --color-1: #f9fafb;
-            --color-2: #2563eb;
+        @media (prefers-color-scheme: light) {
+            :root {
+                --color-1: #f9fafb;
+                --color-2: #2563eb;
+            }
         }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-1: #f5a9b8;
+                --color-2: #000000;
+            }
+        }
+        @media (prefers-color-scheme: no-preference) {
+            :root {
+                --color-1: #f9fafb;
+                --color-2: #2563eb;
+            }
+        }
+
         html, body {
             height: 100%;
             margin: 0;

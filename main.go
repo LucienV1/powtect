@@ -9,7 +9,7 @@ import (
 	_ "embed"
 	"encoding/base64"
 	"encoding/hex"
-	"log"
+	//"log"
 	"net/http"
 	"slices"
 	"strconv"
@@ -108,7 +108,7 @@ func (p *Powtect) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 				d.Next()
 				p.Key = []byte(d.Val())
 				if len(p.Key) != 32 {
-					log.Printf("Powtect: Key must be 32 bytes, padding or truncating")
+					//logPrintf("Powtect: Key must be 32 bytes, padding or truncating")
 					if len(p.Key) > 32 {
 						p.Key = p.Key[:32]
 					} else {
@@ -146,51 +146,51 @@ func (p *Powtect) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 }
 
 func (p Powtect) ServeHTTP(r http.ResponseWriter, d *http.Request, next caddyhttp.Handler) error {
-	log.Println("Powtect: ServeHTTP")
+	//logPrintln("Powtect: ServeHTTP")
 	var wh []string
 	var cn string
 	wh = p.Whitelist
 	cn = p.CookiePrefix
 
-	log.Println("Powtect: Checking whitelist")
+	//logPrintln("Powtect: Checking whitelist")
 	if slices.Contains(wh, d.UserAgent()) {
 		err := next.ServeHTTP(r, d)
 		return err
 	}
-	log.Println("Powtect: Not in whitelist")
-	log.Println("Powtect: Checking cookie")
+	//logPrintln("Powtect: Not in whitelist")
+	//logPrintln("Powtect: Checking cookie")
 	cv, err := d.Cookie(cn + "_main")
 	if err == http.ErrNoCookie {
 
-		log.Println("Powtect: No cookie, creating new")
+		//logPrintln("Powtect: No cookie, creating new")
 		err = createnew(r, d, p)
 		return err
 
 	} else if err != nil {
-		log.Println("Powtect: Error reading cookie")
+		//logPrintln("Powtect: Error reading cookie")
 		return err
 	}
 
-	log.Println("Powtect: Cookie found")
-	log.Println("Powtect: Decrypting cookie")
+	//logPrintln("Powtect: Cookie found")
+	//logPrintln("Powtect: Decrypting cookie")
 
 	c, err := decrypt(p.Key, cv.Value)
 	if err != nil {
-		log.Printf("Powtect: Error decrypting cookie, creating new: %v", err)
+		//logPrintf("Powtect: Error decrypting cookie, creating new: %v", err)
 		err = createnew(r, d, p)
 		return err
 	}
 
 	if time.Now().Unix()-c.Created > int64(p.TTL) {
-		log.Println("Powtect: Cookie expired, creating new")
+		//logPrintln("Powtect: Cookie expired, creating new")
 		err = createnew(r, d, p)
 		return err
 	}
 
-	log.Println("Powtect: Checking cookie and solution")
+	//logPrintln("Powtect: Checking cookie and solution")
 	if c.Unverified && d.Header.Get("X-Powtect-Solution") == "" {
 
-		log.Println("Powtect: Unverified and no solution")
+		//logPrintln("Powtect: Unverified and no solution")
 
 		r.Header().Add("Content-Type", "text/html")
 		r.Header().Add("Content-Length", strconv.Itoa(len(static)))
@@ -198,7 +198,7 @@ func (p Powtect) ServeHTTP(r http.ResponseWriter, d *http.Request, next caddyhtt
 		r.Header().Add("X-Powtect-Level", strconv.Itoa(p.Level))
 		r.Header().Add("X-Powtect-Prefix", c.Prefix)
 
-		log.Println("Powtect: headers set, writing static")
+		//logPrintln("Powtect: headers set, writing static")
 
 		r.WriteHeader(http.StatusOK)
 		_, err = r.Write(static)
@@ -209,7 +209,7 @@ func (p Powtect) ServeHTTP(r http.ResponseWriter, d *http.Request, next caddyhtt
 		c.Solution = d.Header.Get("X-Powtect-Solution")
 		c.Hash = d.Header.Get("X-Powtect-Hash")
 
-		log.Println("Powtect: Unverified and solution")
+		//logPrintln("Powtect: Unverified and solution")
 
 		hash := sha256.New()
 		hash.Write([]byte(c.Solution))
@@ -223,7 +223,7 @@ func (p Powtect) ServeHTTP(r http.ResponseWriter, d *http.Request, next caddyhtt
 
 		if len(c.Prefix) > len(c.Solution) {
 
-			log.Println("Powtect: Prefix longer than solution")
+			//logPrintln("Powtect: Prefix longer than solution")
 
 			r.Header().Add("Content-Type", "text/html")
 			r.Header().Add("Content-Length", strconv.Itoa(len(static)))
@@ -231,33 +231,33 @@ func (p Powtect) ServeHTTP(r http.ResponseWriter, d *http.Request, next caddyhtt
 			r.Header().Add("X-Powtect-Level", strconv.Itoa(p.Level))
 			r.Header().Add("X-Powtect-Prefix", c.Prefix)
 
-			log.Println("Powtect: headers set, writing static")
+			//logPrintln("Powtect: headers set, writing static")
 			r.WriteHeader(http.StatusOK)
 			_, err = r.Write(static)
 			return err
 		}
 		hb, err := hex.DecodeString(c.Hash)
 		if err != nil {
-			log.Printf("Powtect: Error decoding hash: %v", err)
+			//logPrintf("Powtect: Error decoding hash: %v", err)
 			return err
 		}
 
-		log.Println("Powtect: Checking hash and prefix")
+		//logPrintln("Powtect: Checking hash and prefix")
 		if subtle.ConstantTimeCompare(hash.Sum(nil), hb) == 1 && strings.HasPrefix(c.Hash, zero) && c.Prefix == c.Solution[:len(c.Prefix)] {
 
-			log.Println("Powtect: Hash and prefix match")
+			//logPrintln("Powtect: Hash and prefix match")
 			c.Unverified = false
 			c.Solution = d.Header.Get("X-Powtect-Solution")
 			c.Created = time.Now().Unix()
 
 			sec, err := encrypt(p.Key, c)
-			log.Println("Powtect: Encrypting cookie")
+			//logPrintln("Powtect: Encrypting cookie")
 
 			if err != nil {
 				return err
 			}
 
-			log.Println("Powtect: Setting cookie")
+			//logPrintln("Powtect: Setting cookie")
 			b64 := base64.StdEncoding.EncodeToString(sec)
 			http.SetCookie(r, &http.Cookie{
 				Name:     cn + "_main",
@@ -269,7 +269,7 @@ func (p Powtect) ServeHTTP(r http.ResponseWriter, d *http.Request, next caddyhtt
 				SameSite: http.SameSiteStrictMode,
 			})
 
-			log.Println("Powtect: Cookie set, forwarding request")
+			//logPrintln("Powtect: Cookie set, forwarding request")
 
 			err = next.ServeHTTP(r, d)
 			return err
@@ -278,7 +278,7 @@ func (p Powtect) ServeHTTP(r http.ResponseWriter, d *http.Request, next caddyhtt
 
 	} else if !c.Unverified {
 
-		log.Println("Powtect: Verified")
+		//logPrintln("Powtect: Verified")
 
 		i := 0
 		zero := ""
@@ -287,25 +287,14 @@ func (p Powtect) ServeHTTP(r http.ResponseWriter, d *http.Request, next caddyhtt
 			i++
 		}
 
-		log.Println("Powtect: Checking hash")
-		zb, err := hex.DecodeString(zero)
-		if err != nil {
-			return err
-		}
+		if strings.HasPrefix(c.Hash, zero) {
 
-		hb, err := hex.DecodeString(c.Hash)
-		if err != nil {
-			return err
-		}
-
-		if subtle.ConstantTimeCompare(hb, zb) == 1 {
-
-			log.Println("Powtect: Hash check passed")
+			//logPrintln("Powtect: Hash check passed")
 			err = next.ServeHTTP(r, d)
 			return err
 		}
 
-		log.Println("Powtect: Hash check failed, creating new")
+		//logPrintln("Powtect: Hash check failed, creating new")
 		err = createnew(r, d, p)
 		return err
 
@@ -319,7 +308,7 @@ func createnew(r http.ResponseWriter, _ *http.Request, p Powtect) error {
 	var ttl int
 	cn = p.CookiePrefix
 	ttl = p.TTL
-	log.Println("Powtect: Creating new cookie")
+	//logPrintln("Powtect: Creating new cookie")
 
 	pf := make([]byte, 16)
 	_, err := rand.Read(pf)
@@ -328,7 +317,7 @@ func createnew(r http.ResponseWriter, _ *http.Request, p Powtect) error {
 	}
 	prefix := base64.RawStdEncoding.EncodeToString(pf)
 
-	log.Println("Powtect: Encrypting cookie")
+	//logPrintln("Powtect: Encrypting cookie")
 
 	sec, err := encrypt(p.Key, Cookie{
 		Unverified: true,
@@ -339,7 +328,7 @@ func createnew(r http.ResponseWriter, _ *http.Request, p Powtect) error {
 		return err
 	}
 
-	log.Println("Powtect: Setting cookie")
+	//logPrintln("Powtect: Setting cookie")
 
 	b64 := base64.StdEncoding.EncodeToString(sec)
 	http.SetCookie(r, &http.Cookie{
@@ -352,7 +341,7 @@ func createnew(r http.ResponseWriter, _ *http.Request, p Powtect) error {
 		SameSite: http.SameSiteStrictMode,
 	})
 
-	log.Println("Powtect: Cookie set, writing static")
+	//logPrintln("Powtect: Cookie set, writing static")
 
 	r.Header().Set("Content-Type", "text/html")
 	r.Header().Set("Content-Length", strconv.Itoa(len(static)))
@@ -366,66 +355,66 @@ func createnew(r http.ResponseWriter, _ *http.Request, p Powtect) error {
 }
 
 func encrypt(key []byte, c Cookie) ([]byte, error) {
-	log.Println("Powtect: Encrypting cookie")
+	//logPrintln("Powtect: Encrypting cookie")
 	out := make([]byte, 0)
 	enc := codec.NewEncoderBytes(&out, &codec.MsgpackHandle{})
 	enc.Encode(c)
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		log.Printf("Powtect: Error creating cipher: %v", err)
+		//logPrintf("Powtect: Error creating cipher: %v", err)
 		return nil, err
 	}
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
-		log.Printf("Powtect: Error creating GCM: %v", err)
+		//logPrintf("Powtect: Error creating GCM: %v", err)
 		return nil, err
 	}
 	nonce := make([]byte, gcm.NonceSize())
 	_, err = rand.Read(nonce)
 	if err != nil {
-		log.Printf("Powtect: Error creating nonce: %v", err)
+		//logPrintf("Powtect: Error creating nonce: %v", err)
 		return nil, err
 	}
 	sec := gcm.Seal(nonce, nonce, out, nil)
-	log.Println("Powtect: Cookie encrypted")
+	//logPrintln("Powtect: Cookie encrypted")
 
 	return sec, nil
 }
 
 func decrypt(key []byte, b64 string) (Cookie, error) {
 	var c Cookie
-	log.Println("Powtect: Decrypting cookie")
+	//logPrintln("Powtect: Decrypting cookie")
 
 	data, err := base64.StdEncoding.DecodeString(b64)
 	if err != nil {
-		log.Printf("Powtect: Error decoding cookie: %v", err)
+		//logPrintf("Powtect: Error decoding cookie: %v", err)
 		return Cookie{}, err
 	}
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		log.Printf("Powtect: Error creating cipher: %v", err)
+		//logPrintf("Powtect: Error creating cipher: %v", err)
 		return Cookie{}, err
 	}
 	gcm, err := cipher.NewGCM(block)
 	if err != nil {
-		log.Printf("Powtect: Error creating GCM: %v", err)
+		//logPrintf("Powtect: Error creating GCM: %v", err)
 		return Cookie{}, err
 	}
 	nonceSize := gcm.NonceSize()
 	nonce, ciphertext := data[:nonceSize], data[nonceSize:]
 	plain, err := gcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		log.Printf("Powtect: Error decrypting cookie: %v", err)
+		//logPrintf("Powtect: Error decrypting cookie: %v", err)
 		return Cookie{}, err
 	}
 	dec := codec.NewDecoderBytes(plain, &codec.MsgpackHandle{})
 	err = dec.Decode(&c)
 	if err != nil {
-		log.Printf("Powtect: Error decoding cookie: %v", err)
+		//logPrintf("Powtect: Error decoding cookie: %v", err)
 		return Cookie{}, err
 	}
-	log.Println("Powtect: Cookie decrypted")
+	//logPrintln("Powtect: Cookie decrypted")
 	return c, nil
 }
