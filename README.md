@@ -32,7 +32,7 @@ the key, if not provided, is randomly generated on startup, so verification will
 keys are padded or truncated to 32 bytes.  
 
 ## install and modification
-currently to install, you can just run `xcaddy --with github.com/lucienv1/powtect`  
+currently to install, you can just run `xcaddy build --with github.com/lucienv1/powtect`  
 alternatively (and if you want to modify anything), run `git clone https://github.com/lucienv1/powtect` then run [xcaddy](https://github.com/caddyserver/xcaddy) in the same directory  
 
 
