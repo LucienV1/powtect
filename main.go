@@ -106,17 +106,9 @@ func (p *Powtect) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 		case "key":
 			{
 				d.Next()
-				p.Key = []byte(d.Val())
-				if len(p.Key) != 32 {
-					//logPrintf("Powtect: Key must be 32 bytes, padding or truncating")
-					if len(p.Key) > 32 {
-						p.Key = p.Key[:32]
-					} else {
-						for len(p.Key) < 32 {
-							p.Key = append(p.Key, 0)
-						}
-					}
-				}
+				h := sha256.New()
+				h.Write([]byte(d.Val()))
+				p.Key = h.Sum(nil)
 				continue
 			}
 		case "whitelist":
